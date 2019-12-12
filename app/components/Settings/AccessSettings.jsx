@@ -9,6 +9,7 @@ import cnames from "classnames";
 import Icon from "../Icon/Icon";
 import LoadingButton from "../Utility/LoadingButton";
 import {Switch, Button} from "bitshares-ui-style-guide";
+import NodeSelector from "../Utility/NodeSelector";
 
 const autoSelectionUrl = "wss://fake.automatic-selection.com";
 
@@ -101,6 +102,9 @@ class AutoSelectionNode extends React.Component {
                             content="settings.automatic"
                             totalNodes={totalNodes}
                         />
+                    </div>
+                    <div style={{float: "right", marginBottom: "0.5rem"}}>
+                        <NodeSelector />
                     </div>
                 </div>
             );
@@ -558,7 +562,7 @@ class AccessSettings extends React.Component {
         ) : (
             <div style={{paddingTop: "1em"}}>
                 {this.renderAutoSelection(connectedNode)}
-
+                <div style={{clear: "both"}} />
                 <div className="active-node">
                     <LoadingButton
                         style={{float: "right"}}

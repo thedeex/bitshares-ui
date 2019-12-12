@@ -7,6 +7,7 @@ import {
     getActiveWallets
 } from "common/gatewayMethods";
 import {blockTradesAPIs} from "api/apiConfig";
+import {getOnChainConfig} from "../lib/chain/onChainConfig";
 
 let inProgress = {};
 
@@ -147,6 +148,13 @@ class GatewayActions {
     temporarilyDisable({backer}) {
         return dispatch => {
             dispatch({backer});
+        };
+    }
+
+    loadOnChainGatewayConfig() {
+        return dispatch => {
+            // fixme: access to onchain config should be cut out into a separate store or similar, this is abusing gatewaystore for a quick fix
+            getOnChainConfig().then(config => dispatch(config));
         };
     }
 }

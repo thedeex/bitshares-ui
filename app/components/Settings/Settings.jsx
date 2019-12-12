@@ -31,12 +31,14 @@ class Settings extends React.Component {
             "locale",
             "unit",
             "fee_asset",
+            "filteredServiceProviders",
             "browser_notifications",
             "showSettles",
             "walletLockTimeout",
             "themes",
             "showAssetPercent",
-            "viewOnlyMode"
+            "viewOnlyMode",
+            "showProposedTx"
         ];
         // disable that the user can change login method if only one is allowed
         if (getAllowedLogins().length > 1) general.push("passwordLogin");
@@ -257,6 +259,7 @@ class Settings extends React.Component {
                 });
                 break;
 
+            case "showProposedTx":
             case "showSettles":
             case "showAssetPercent":
             case "passwordLogin":
@@ -269,6 +272,8 @@ class Settings extends React.Component {
                 });
                 break;
 
+            case "filteredServiceProviders":
+                break;
             case "fee_asset":
             case "unit":
                 const defaultSettings = defaults["unit"];
@@ -466,9 +471,7 @@ class Settings extends React.Component {
                                             paddingTop: 5,
                                             marginBottom: 30
                                         }}
-                                        content={`settings.${
-                                            menuEntries[activeSetting]
-                                        }_text`}
+                                        content={`settings.${menuEntries[activeSetting]}_text`}
                                         className="panel-bg-color"
                                     />
                                 )}

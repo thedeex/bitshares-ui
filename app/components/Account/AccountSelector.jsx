@@ -56,7 +56,8 @@ class AccountSelector extends React.Component {
         disabled: PropTypes.bool,
         editable: PropTypes.bool,
         locked: PropTypes.bool,
-        requireActiveSelect: PropTypes.bool
+        requireActiveSelect: PropTypes.bool,
+        noForm: PropTypes.bool
     };
 
     static defaultProps = {
@@ -65,7 +66,8 @@ class AccountSelector extends React.Component {
         disabled: null,
         editable: null,
         locked: false,
-        requireActiveSelect: true // Should not be set to false, required for fallback
+        requireActiveSelect: true, // Should not be set to false, required for fallback
+        noForm: false
     };
 
     constructor(props) {
@@ -80,18 +82,17 @@ class AccountSelector extends React.Component {
     componentDidMount() {
         let {account, accountName} = this.props;
 
+        // Populate account search array, fetch only once
         if (accountName) {
-            this._addToIndex(accountName, true);
+            this._addThisToIndex(accountName);
         }
-
-        // Populate account search array
         this.props.myActiveAccounts.map(a => {
-            this._addToIndex(a, true);
+            this._addThisToIndex(a);
         });
-
         this.props.contacts.map(a => {
-            this._addToIndex(a, true);
+            this._addThisToIndex(a);
         });
+        this._fetchAccounts();
 
         if (this.props.onAccountChanged && account)
             this.props.onAccountChanged(account);
@@ -240,10 +241,10 @@ class AccountSelector extends React.Component {
             accountType === "name"
                 ? "#" + accountResult.get("id").substring(4)
                 : accountType === "id"
-                    ? accountResult.get("name")
-                    : accountType == "pubkey" && this.props.allowPubKey
-                        ? "Public Key"
-                        : null;
+                ? accountResult.get("name")
+                : accountType == "pubkey" && this.props.allowPubKey
+                ? "Public Key"
+                : null;
 
         return {
             name: accountName,
@@ -430,14 +431,14 @@ class AccountSelector extends React.Component {
         editableInput = !!lockedState
             ? false
             : this.props.editable != null
-                ? this.props.editable
-                : undefined;
+            ? this.props.editable
+            : undefined;
 
         disabledInput = !!lockedState
             ? true
             : this.props.disabled != null
-                ? this.props.disabled
-                : undefined;
+            ? this.props.disabled
+            : undefined;
 
         // Selected Account
         if (account) {
@@ -623,7 +624,7 @@ class AccountSelector extends React.Component {
 
         let accountImageContainer = this.props
             .hideImage ? null : selectedAccount &&
-        selectedAccount.accountType === "pubkey" ? (
+          selectedAccount.accountType === "pubkey" ? (
             <div className="account-image">
                 <Icon name="key" title="icons.key" size="4x" />
             </div>
@@ -633,7 +634,7 @@ class AccountSelector extends React.Component {
                     height: this.props.size || 33,
                     width: this.props.size || 33
                 }}
-                account={selectedAccount ? selectedAccount.id : null}
+                account={selectedAccount ? selectedAccount.name : null}
                 custom_image={null}
             />
         );
@@ -667,7 +668,7 @@ class AccountSelector extends React.Component {
                         className={cnames(
                             "right-label",
                             selectedAccount.isContact ||
-                            selectedAccount.isOwnAccount
+                                selectedAccount.isOwnAccount
                                 ? "positive"
                                 : null,
                             selectedAccount.isKnownScammer ? "negative" : null
@@ -684,17 +685,22 @@ class AccountSelector extends React.Component {
                 </div>
             );
 
+        const FormWrapper = this.props.noForm ? React.Fragment : Form;
+        const formWrapperProps = this.props.noForm
+            ? {}
+            : {
+                  className: "full-width",
+                  layout: "vertical",
+                  style: this.props.style
+              };
+
         return (
             <Tooltip
                 className="input-area"
                 title={this.props.tooltip}
                 mouseEnterDelay={0.5}
             >
-                <Form
-                    className="full-width"
-                    layout="vertical"
-                    style={this.props.style}
-                >
+                <FormWrapper {...formWrapperProps}>
                     <Form.Item
                         label={
                             this.props.label
@@ -738,7 +744,7 @@ class AccountSelector extends React.Component {
                             ) : null}
                         </div>
                     </Form.Item>
-                </Form>
+                </FormWrapper>
             </Tooltip>
         );
     }

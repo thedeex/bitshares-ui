@@ -448,6 +448,7 @@ class AccountDepositWithdraw extends React.Component {
                             initial_conversion_input_coin_type="bts"
                             initial_conversion_output_coin_type="bitbtc"
                             initial_conversion_estimated_input_amount="1000"
+                            params={this.props.location}
                         />
                     </div>
                     <div className="content-block" />
@@ -713,8 +714,8 @@ class AccountDepositWithdraw extends React.Component {
                         {currentServiceDown
                             ? null
                             : activeService && services[activeService]
-                                ? services[activeService].template
-                                : services[0].template}
+                            ? services[activeService].template
+                            : services[0].template}
                     </div>
                 </div>
             </div>

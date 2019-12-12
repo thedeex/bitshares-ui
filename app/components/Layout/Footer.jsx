@@ -382,9 +382,8 @@ class Footer extends React.Component {
                 activeNode = this.getNode(nodes[0]);
             }
         }
-
         let block_height = this.props.dynGlobalObject.get("head_block_number");
-        let version_match = APP_VERSION.match(/2\.0\.(\d\w+)/);
+        let version_match = APP_VERSION.match(/\d\.\d\.(\d{6}.{0,1}\d{0,1})/);
         let version = version_match
             ? `.${version_match[1]}`
             : ` ${APP_VERSION}`;
@@ -417,7 +416,8 @@ class Footer extends React.Component {
                             }
                         },
                         {
-                            translationKey: "connection.manual_ping",
+                            translationKey:
+                                "connection.manual_ping_and_narrow_down",
                             callback: () => {
                                 if (!this.props.synced) {
                                     this.onAccess();
@@ -616,12 +616,11 @@ class Footer extends React.Component {
                                         }}
                                     >
                                         <div className="footer-status">
-                                            {connected &&
-                                                activeNode.testNet && (
-                                                    <span className="testnet">
-                                                        <Translate content="settings.testnet_nodes" />{" "}
-                                                    </span>
-                                                )}
+                                            {connected && activeNode.testNet && (
+                                                <span className="testnet">
+                                                    <Translate content="settings.testnet_nodes" />{" "}
+                                                </span>
+                                            )}
                                             {!connected ? (
                                                 <span className="warning">
                                                     <Translate content="footer.disconnected" />
@@ -641,10 +640,10 @@ class Footer extends React.Component {
                                                 {!connected
                                                     ? "-"
                                                     : !activeNode.ping
-                                                        ? "-"
-                                                        : parseInt(
-                                                              activeNode.ping
-                                                          ) + "ms"}
+                                                    ? "-"
+                                                    : parseInt(
+                                                          activeNode.ping
+                                                      ) + "ms"}
                                                 &nbsp;/&nbsp;
                                                 <span className="footer-block-title">
                                                     <Translate content="footer.block" />

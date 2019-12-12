@@ -30,37 +30,49 @@ import Page404 from "./components/Page404/Page404";
 
 const Invoice = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "exchange" */ "./components/Transfer/Invoice"),
+        import(
+            /* webpackChunkName: "exchange" */ "./components/Transfer/Invoice"
+        ),
     loading: LoadingIndicator
 });
 
 const Exchange = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "exchange" */ "./components/Exchange/ExchangeContainer"),
+        import(
+            /* webpackChunkName: "exchange" */ "./components/Exchange/ExchangeContainer"
+        ),
     loading: LoadingIndicator
 });
 
 const Explorer = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "explorer" */ "./components/Explorer/Explorer"),
+        import(
+            /* webpackChunkName: "explorer" */ "./components/Explorer/Explorer"
+        ),
     loading: LoadingIndicator
 });
 
 const PredictionMarketsPage = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "pm" */ "./components/PredictionMarkets/PMAssetsContainer"),
+        import(
+            /* webpackChunkName: "pm" */ "./components/PredictionMarkets/PMAssetsContainer"
+        ),
     loading: LoadingIndicator
 });
 
 const AccountPage = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "account" */ "./components/Account/AccountPage"),
+        import(
+            /* webpackChunkName: "account" */ "./components/Account/AccountPage"
+        ),
     loading: LoadingIndicator
 });
 
 const AccountDepositWithdraw = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "deposit-withdraw" */ "./components/Account/AccountDepositWithdraw"),
+        import(
+            /* webpackChunkName: "deposit-withdraw" */ "./components/Account/AccountDepositWithdraw"
+        ),
     loading: LoadingIndicator
 });
 
@@ -71,7 +83,9 @@ const News = Loadable({
 
 const Settings = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "settings" */ "./components/Settings/SettingsContainer"),
+        import(
+            /* webpackChunkName: "settings" */ "./components/Settings/SettingsContainer"
+        ),
     loading: LoadingIndicator
 });
 
@@ -88,61 +102,89 @@ const Asset = Loadable({
 
 const Block = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "block" */ "./components/Blockchain/BlockContainer"),
+        import(
+            /* webpackChunkName: "block" */ "./components/Blockchain/BlockContainer"
+        ),
     loading: LoadingIndicator
 });
 
 const DashboardAccountsOnly = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "dashboard-accounts" */ "./components/Dashboard/DashboardAccountsOnly"),
+        import(
+            /* webpackChunkName: "dashboard-accounts" */ "./components/Dashboard/DashboardAccountsOnly"
+        ),
     loading: LoadingIndicator
 });
 
 const DashboardPage = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "dashboard" */ "./components/Dashboard/DashboardPage"),
+        import(
+            /* webpackChunkName: "dashboard" */ "./components/Dashboard/DashboardPage"
+        ),
     loading: LoadingIndicator
 });
 
 const WalletManager = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "wallet" */ "./components/Wallet/WalletManager"),
+        import(
+            /* webpackChunkName: "wallet" */ "./components/Wallet/WalletManager"
+        ),
     loading: LoadingIndicator
 });
 
 const ExistingAccount = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "existing-account" */ "./components/Wallet/ExistingAccount"),
+        import(
+            /* webpackChunkName: "existing-account" */ "./components/Wallet/ExistingAccount"
+        ),
     loading: LoadingIndicator
 });
 
 const CreateWorker = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "create-worker" */ "./components/Account/CreateWorker"),
+        import(
+            /* webpackChunkName: "create-worker" */ "./components/Account/CreateWorker"
+        ),
     loading: LoadingIndicator
 });
 
 const Barter = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "settings" */ "./components/Showcases/Barter"),
+        import(
+            /* webpackChunkName: "settings" */ "./components/Showcases/Barter"
+        ),
     loading: LoadingIndicator
 });
 
 const Borrow = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "settings" */ "./components/Showcases/Borrow"),
+        import(
+            /* webpackChunkName: "settings" */ "./components/Showcases/Borrow"
+        ),
     loading: LoadingIndicator
 });
 
 const Htlc = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "settings" */ "./components/Showcases/Htlc"),
+        import(
+            /* webpackChunkName: "settings" */ "./components/Showcases/Htlc"
+        ),
     loading: LoadingIndicator
 });
 
 const DirectDebit = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "settings" */ "./components/Showcases/DirectDebit"),
+        import(
+            /* webpackChunkName: "settings" */ "./components/Showcases/DirectDebit"
+        ),
+    loading: LoadingIndicator
+});
+
+const QuickTrade = Loadable({
+    loader: () =>
+        import(
+            /* webpackChunkName: "QuickTrade" */ "./components/QuickTrade/QuickTradeRouter"
+        ),
     loading: LoadingIndicator
 });
 
@@ -154,6 +196,10 @@ import AccountRegistration from "./components/Registration/AccountRegistration";
 import {CreateWalletFromBrainkey} from "./components/Wallet/WalletCreate";
 import ShowcaseGrid from "./components/Showcases/ShowcaseGrid";
 import PriceAlertNotifications from "./components/PriceAlertNotifications";
+import GatewaySelectorModal from "./components/Gateways/GatewaySelectorModal";
+import SettingsStore from "./stores/SettingsStore";
+import GatewayActions from "./actions/GatewayActions";
+import {allowedGateway} from "./branding";
 
 class App extends React.Component {
     constructor() {
@@ -167,6 +213,7 @@ class App extends React.Component {
                 : false;
         this.state = {
             isBrowserSupportModalVisible: false,
+            isGatewaySelectorModalVisible: false,
             loading: false,
             synced: this._syncStatus(),
             syncFail,
@@ -182,6 +229,9 @@ class App extends React.Component {
 
         this.showBrowserSupportModal = this.showBrowserSupportModal.bind(this);
         this.hideBrowserSupportModal = this.hideBrowserSupportModal.bind(this);
+        this.hideGatewaySelectorModal = this.hideGatewaySelectorModal.bind(
+            this
+        );
 
         Notification.config({
             duration: DEFAULT_NOTIFICATION_DURATION,
@@ -234,6 +284,12 @@ class App extends React.Component {
     hideBrowserSupportModal() {
         this.setState({
             isBrowserSupportModalVisible: false
+        });
+    }
+
+    hideGatewaySelectorModal() {
+        this.setState({
+            isGatewaySelectorModalVisible: false
         });
     }
 
@@ -292,7 +348,39 @@ class App extends React.Component {
                 this.setState({incognito});
             }.bind(this)
         );
-        updateGatewayBackers();
+        GatewayActions.loadOnChainGatewayConfig();
+
+        if (allowedGateway()) {
+            this._ensureExternalServices();
+        }
+    }
+
+    _ensureExternalServices() {
+        setTimeout(() => {
+            let hasLoggedIn =
+                AccountStore.getState().myActiveAccounts.length > 0 ||
+                !!AccountStore.getState().passwordAccount;
+            if (!hasLoggedIn) {
+                this._ensureExternalServices();
+            } else {
+                this._checkExternalServices();
+            }
+        }, 5000);
+    }
+
+    _checkExternalServices() {
+        if (
+            SettingsStore.getState().viewSettings.get(
+                "hasSeenExternalServices",
+                false
+            )
+        ) {
+            updateGatewayBackers();
+        } else {
+            this.setState({
+                isGatewaySelectorModalVisible: true
+            });
+        }
     }
 
     componentDidUpdate(prevProps) {
@@ -528,6 +616,16 @@ class App extends React.Component {
                                     path="/prediction"
                                     component={PredictionMarketsPage}
                                 />
+                                <Route
+                                    exact
+                                    path="/instant-trade"
+                                    component={QuickTrade}
+                                />
+                                <Route
+                                    exact
+                                    path="/instant-trade/:marketID"
+                                    component={QuickTrade}
+                                />
                                 <Route path="*" component={Page404} />
                             </Switch>
                         </div>
@@ -580,6 +678,10 @@ class App extends React.Component {
                             visible={this.state.isBrowserSupportModalVisible}
                             hideModal={this.hideBrowserSupportModal}
                             showModal={this.showBrowserSupportModal}
+                        />
+                        <GatewaySelectorModal
+                            visible={this.state.isGatewaySelectorModalVisible}
+                            hideModal={this.hideGatewaySelectorModal}
                         />
                     </div>
                 </BodyClassName>

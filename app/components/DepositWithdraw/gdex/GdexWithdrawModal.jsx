@@ -850,7 +850,6 @@ class GdexWithdrawModal extends React.Component {
                         <div className="content-block gate_fee">
                             <AmountSelector
                                 refCallback={this.setNestedRef.bind(this)}
-                                label="transfer.fee"
                                 disabled={true}
                                 amount={this.state.feeAmount.getAmount({
                                     real: true
@@ -961,20 +960,20 @@ class GdexWithdrawModal extends React.Component {
     }
 }
 
-export default BindToChainState(
-    connect(
-        GdexWithdrawModal,
-        {
-            listenTo() {
-                return [SettingsStore];
-            },
-            getProps(props) {
-                return {
-                    fee_asset_symbol: SettingsStore.getState().settings.get(
-                        "fee_asset"
-                    )
-                };
-            }
+GdexWithdrawModal = BindToChainState(GdexWithdrawModal);
+
+export default connect(
+    GdexWithdrawModal,
+    {
+        listenTo() {
+            return [SettingsStore];
+        },
+        getProps(props) {
+            return {
+                fee_asset_symbol: SettingsStore.getState().settings.get(
+                    "fee_asset"
+                )
+            };
         }
-    )
+    }
 );

@@ -1,11 +1,10 @@
-import React, { Fragment } from "react";
+import React, {Fragment} from "react";
 import Translate from "react-translate-component";
-import {saveAs} from "file-saver";
 import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import utils from "common/utils";
 import JSONModal from "components/Modal/JSONModal";
-import { Icon as AntIcon } from "bitshares-ui-style-guide";
+import {Icon as AntIcon} from "bitshares-ui-style-guide";
 import {
     ChainTypes as grapheneChainTypes,
     FetchChain,
@@ -18,7 +17,6 @@ import cnames from "classnames";
 import PropTypes from "prop-types";
 import PaginatedList from "../Utility/PaginatedList";
 const {operations} = grapheneChainTypes;
-import report from "bitshares-report";
 import LoadingIndicator from "../LoadingIndicator";
 import {Tooltip, Modal, Button, Select, Input} from "bitshares-ui-style-guide";
 const ops = Object.keys(operations);
@@ -74,6 +72,8 @@ class RecentTransactions extends React.Component {
     constructor(props) {
         super();
 
+        // fixme access to ES could be wrapped in a store or something else
+
         this.state = {
             limit: props.limit,
             fetchingAccountHistory: false,
@@ -83,7 +83,10 @@ class RecentTransactions extends React.Component {
             rows: [],
             showModal: false,
             esNodeCustom: false,
-            esNode: settingsAPIs.ES_WRAPPER_LIST[0].url,
+            esNode:
+                settingsAPIs.ES_WRAPPER_LIST.length > 0
+                    ? settingsAPIs.ES_WRAPPER_LIST[0].url
+                    : null,
             visibleId: ""
         };
         this.getDataSource = this.getDataSource.bind(this);
@@ -275,6 +278,7 @@ class RecentTransactions extends React.Component {
                 accountHistoryError: null
             });
         } catch (err) {
+            console.error(err);
             this.setState({
                 fetchingAccountHistory: false,
                 accountHistoryError: err,
@@ -291,11 +295,11 @@ class RecentTransactions extends React.Component {
     }
 
     openJSONModal(id) {
-        this.setState({ visibleId: id });
+        this.setState({visibleId: id});
     }
 
     closeJSONModal = () => {
-        this.setState({ visibleId: "" });
+        this.setState({visibleId: ""});
     };
 
     getDataSource(o, current_account_id) {
@@ -515,7 +519,9 @@ class RecentTransactions extends React.Component {
                                 </Tooltip>
                             ) : null}
 
-                            {historyCount > 0 && this.props.dashboard ? (
+                            {historyCount > 0 &&
+                            this.props.dashboard &&
+                            this.state.esNode !== null ? (
                                 <Tooltip
                                     placement="bottom"
                                     title={counterpart.translate(

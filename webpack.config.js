@@ -9,9 +9,9 @@ var locales = require("./app/assets/locales");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 /*
-* For staging builds, set the version to the latest commit hash, for
-* production set it to the package version
-*/
+ * For staging builds, set the version to the latest commit hash, for
+ * production set it to the package version
+ */
 let branch = !!process.env.BRANCH ? process.env.BRANCH : git.branch();
 var __VERSION__ =
     branch === "develop" ? git.short() : require("./package.json").version;
@@ -58,9 +58,9 @@ module.exports = function(env) {
     const baseUrl = env.electron ? "./" : "baseUrl" in env ? env.baseUrl : "/";
 
     /*
-    * moment and react-intl include tons of locale files, use a regex and
-    * ContextReplacementPlugin to only include certain locale files
-    */
+     * moment and react-intl include tons of locale files, use a regex and
+     * ContextReplacementPlugin to only include certain locale files
+     */
     let regexString = "";
     locales.forEach((l, i) => {
         regexString = regexString + (l + (i < locales.length - 1 ? "|" : ""));
@@ -109,10 +109,10 @@ module.exports = function(env) {
         let outputDir = env.electron
             ? "electron"
             : env.hash
-                ? !baseUrl
-                    ? "hash-history"
-                    : `hash-history_${baseUrl.replace("/", "")}`
-                : "dist";
+            ? !baseUrl
+                ? "hash-history"
+                : `hash-history_${baseUrl.replace("/", "")}`
+            : "dist";
         outputPath = path.join(root_dir, "build", outputDir);
 
         // DIRECTORY CLEANER
@@ -205,6 +205,34 @@ module.exports = function(env) {
         )
     );
 
+    /* Workaround in which the github pages server will find a file when it looks
+    for /deposit-withdraw that will redirect to the hash router's equivalent
+    /#/deposit-withdraw */
+
+    if (env.hash)
+        plugins.push(
+            new CopyWebpackPlugin(
+                [
+                    {
+                        from: path.join(
+                            root_dir,
+                            "app",
+                            "components",
+                            "DepositWithdraw",
+                            "blocktrades",
+                            "index.html"
+                        ),
+                        to: path.join(
+                            outputPath,
+                            "deposit-withdraw",
+                            "index.html"
+                        ),
+                        toType: "file"
+                    }
+                ],
+                {}
+            )
+        );
     var config = {
         mode: env.noUgly ? "none" : env.prod ? "production" : "development",
         entry: {
@@ -222,7 +250,8 @@ module.exports = function(env) {
             filename: env.prod ? "[name].[chunkhash].js" : "[name].js",
             chunkFilename: env.prod ? "[name].[chunkhash].js" : "[name].js",
             pathinfo: !env.prod,
-            sourceMapFilename: "[name].js.map"
+            sourceMapFilename: "[name].js.map",
+            globalObject: "this"
         },
         optimization: {
             splitChunks: {

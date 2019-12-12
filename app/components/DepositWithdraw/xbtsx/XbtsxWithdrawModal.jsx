@@ -763,7 +763,6 @@ class XbtsxWithdrawModal extends React.Component {
                         <div className="content-block gate_fee">
                             <AmountSelector
                                 refCallback={this.setNestedRef.bind(this)}
-                                label="transfer.fee"
                                 disabled={true}
                                 amount={this.state.feeAmount.getAmount({
                                     real: true
@@ -872,21 +871,20 @@ class XbtsxWithdrawModal extends React.Component {
     }
 }
 
-export default BindToChainState(
-    connect(
-        XbtsxWithdrawModal,
-        {
-            listenTo() {
-                return [SettingsStore];
-            },
-            getProps(props) {
-                return {
-                    fee_asset_symbol: SettingsStore.getState().settings.get(
-                        "fee_asset"
-                    )
-                };
-            }
+XbtsxWithdrawModal = BindToChainState(XbtsxWithdrawModal);
+
+export default connect(
+    XbtsxWithdrawModal,
+    {
+        listenTo() {
+            return [SettingsStore];
+        },
+        getProps(props) {
+            return {
+                fee_asset_symbol: SettingsStore.getState().settings.get(
+                    "fee_asset"
+                )
+            };
         }
-    ),
-    {keep_updating: true}
+    }
 );

@@ -8,8 +8,8 @@ import BindToChainState from "../Utility/BindToChainState";
 import LinkToAccountById from "../Utility/LinkToAccountById";
 import counterpart from "counterpart";
 import PropTypes from "prop-types";
-import sanitize from "sanitize";
 import PaginatedList from "components/Utility/PaginatedList";
+import utils from "common/utils";
 
 function getWitnessOrCommittee(type, acct) {
     let url = "",
@@ -22,10 +22,7 @@ function getWitnessOrCommittee(type, acct) {
     }
 
     url = account ? account.get("url") : url;
-    url = sanitize(url, {
-        whiteList: [], // empty, means filter out all tags
-        stripIgnoreTag: true // filter out all HTML not in the whilelist
-    });
+    url = utils.sanitize(url);
     votes = account ? account.get("total_votes") : votes;
     return {
         url,
@@ -228,8 +225,8 @@ class VotingAccountsList extends React.Component {
                     return a.supported.translate > b.supported.translate
                         ? 1
                         : a.supported.translate < b.supported.translate
-                            ? -1
-                            : 0;
+                        ? -1
+                        : 0;
                 },
                 render: item => {
                     return (

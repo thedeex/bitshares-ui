@@ -108,6 +108,8 @@ class SettingsStore {
         return {
             locale: "en",
             apiServer: settingsAPIs.DEFAULT_WS_NODE,
+            filteredApiServers: [],
+            filteredServiceProviders: ["all"],
             faucet_address: settingsAPIs.DEFAULT_FAUCET,
             unit: CORE_ASSET,
             fee_asset: CORE_ASSET,
@@ -123,7 +125,8 @@ class SettingsStore {
                 }
             },
             rememberMe: true,
-            viewOnlyMode: true
+            viewOnlyMode: true,
+            showProposedTx: false
         };
     }
 
@@ -147,8 +150,11 @@ class SettingsStore {
                 "ja"
             ],
             apiServer: settingsAPIs.WS_NODE_LIST.slice(0), // clone all default servers as configured in apiConfig.js
+            filteredApiServers: [[]],
+            filteredServiceProviders: [[]],
             unit: getUnits(),
             fee_asset: getUnits(),
+            showProposedTx: [{translate: "yes"}, {translate: "no"}],
             showSettles: [{translate: "yes"}, {translate: "no"}],
             showAssetPercent: [{translate: "yes"}, {translate: "no"}],
             themes: ["darkTheme", "lightTheme", "midnightTheme"],
@@ -209,8 +215,10 @@ class SettingsStore {
                 }
                 // must be of same type to be compatible
                 if (typeof settings[key] === typeof defaultSettings[key]) {
-                    // incompatible settings, dont store
-                    if (typeof settings[key] == "object") {
+                    if (
+                        !(settings[key] instanceof Array) &&
+                        typeof settings[key] == "object"
+                    ) {
                         let newSetting = this._replaceDefaults(
                             "saving",
                             settings[key],
@@ -221,7 +229,17 @@ class SettingsStore {
                         }
                     } else if (settings[key] !== defaultSettings[key]) {
                         // only save if its not the default
-                        returnSettings[key] = settings[key];
+                        if (settings[key] instanceof Array) {
+                            if (
+                                JSON.stringify(settings[key]) !==
+                                JSON.stringify(defaultSettings[key])
+                            ) {
+                                returnSettings[key] = settings[key];
+                            }
+                        } else {
+                            // only save if its not the default
+                            returnSettings[key] = settings[key];
+                        }
                     }
                 }
                 // all other cases are defaults, do not put the value in local storage
@@ -234,7 +252,10 @@ class SettingsStore {
                     if (typeof settings[key] !== typeof defaultSettings[key]) {
                         // incompatible types, use default
                         setDefaults = true;
-                    } else if (typeof settings[key] == "object") {
+                    } else if (
+                        !(settings[key] instanceof Array) &&
+                        typeof settings[key] == "object"
+                    ) {
                         // check all subkeys
                         returnSettings[key] = this._replaceDefaults(
                             "loading",
@@ -526,7 +547,6 @@ class SettingsStore {
             default:
                 break;
         }
-
         // check current settings
         if (this.settings.get(payload.setting) !== payload.value) {
             this.settings = this.settings.set(payload.setting, payload.value);
